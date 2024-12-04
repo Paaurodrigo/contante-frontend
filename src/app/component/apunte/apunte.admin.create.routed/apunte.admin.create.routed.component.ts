@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component,inject, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,6 +14,11 @@ import { ApunteService } from '../../../service/apunte.service';
 import { CalendarModule } from 'primeng/calendar';
 import { CALENDAR_ES } from '../../../environment/environment';
 import { PrimeNGConfig } from 'primeng/api';
+import { ITipoapunte } from '../../../model/tipoapunte.interface';
+import { MatDialog } from '@angular/material/dialog';
+import { TipoApunteService } from '../../../service/tipoapunte.service';
+import { TipoapunteAdminSelectorUnroutedComponent } from '../../tipoapunte/tipoapunte.admin.selector.unrouted/tipoapunte.admin.selector.unrouted.component';
+
 
 declare let bootstrap: any;
 
@@ -36,15 +41,38 @@ export class ApunteAdminCreateRoutedComponent implements OnInit {
   oApunteForm: FormGroup | undefined = undefined;
   oApunte: IApunte | null = null;
   strMessage: string = '';
+ oTipoapunte: ITipoapunte = {} as ITipoapunte;
 
   myModal: any;
-
-  constructor(private oApunteService: ApunteService, private oRouter: Router,private oPrimeconfig: PrimeNGConfig) {}
+  readonly dialog = inject(MatDialog);
+  constructor(private oApunteService: ApunteService, private oRouter: Router,private oPrimeconfig: PrimeNGConfig, private oTipoapunteService: TipoApunteService) {}
 
   ngOnInit() {
     this.createForm();
     this.oApunteForm?.markAllAsTouched();
     this.oPrimeconfig.setTranslation(CALENDAR_ES);
+
+    this.oApunteForm?.controls['id_tipoapunte'].valueChanges.subscribe(change => {
+      if (change) {
+        // obtener el objeto tipocuenta del servidor
+        this.oTipoapunteService.get(change).subscribe({
+          next: (oTipoapunte: ITipoapunte) => {
+            this.oTipoapunte = oTipoapunte;
+          },
+
+          error: (err) => {
+            console.log(err);
+            this.oTipoapunte = {} as ITipoapunte;
+            // marcar el campo como inválido
+            this.oApunteForm?.controls['id_tipoapunte'].setErrors({
+              invalid: true,
+            });
+          }
+        });
+      } else {
+        this.oTipoapunte = {} as ITipoapunte;
+      }
+    });
   }
 
   createForm() {
@@ -108,6 +136,32 @@ export class ApunteAdminCreateRoutedComponent implements OnInit {
       keyboard: false,
     });
     this.myModal.show();
+  }
+
+  showTipoapunteSelectorModal() {
+    const dialogRef = this.dialog.open(TipoapunteAdminSelectorUnroutedComponent, {
+      height: '800px',
+      maxHeight: '1200px',
+      width: '80%',
+      maxWidth: '90%',
+
+    });
+
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+      if (result !== undefined) {
+        console.log(result);
+        this.oApunteForm?.controls['id_tipoapunte'].setValue(result.id);
+        this.oTipoapunte = result;
+        //this.animal.set(result);
+      }
+    });
+
+
+
+
+    return false;
   }
 
   onReset() {

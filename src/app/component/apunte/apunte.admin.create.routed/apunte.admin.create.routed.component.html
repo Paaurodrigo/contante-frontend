@@ -140,17 +140,18 @@
         </div><div class="row mt-4">
           <mat-form-field>
             <mat-label>Id Tipo Apunte</mat-label>
-            <input
-              matInput
-              formControlName="id_tipoapunte"
-              placeholder="Escribe la id tipo apunte"
-            />
-            <mat-hint align="start">Un numero entero</mat-hint>
-            @if (oApunteForm?.get('id_tipoapunte')?.hasError('required')){
-            <mat-error> El campo debe es obligatorio </mat-error>
-            } @if (oApunteForm?.get('id_tipoapunte')?.hasError('pattern')){
-            <mat-error> Debe ser un numero entero </mat-error>
-            }
+
+            <div class="d-flex justify-content-end">
+              <button class="btn btn-primary" (click)="showTipoapunteSelectorModal()">
+                <i class="bi bi-search"></i>
+                Buscar
+              </button>
+            </div>
+            <div class="d-flex justify-content-start">
+              <span>{{oTipoapunte.descripcion}}</span>
+            </div>
+
+            <input matInput formControlName="id_tipoapunte" placeholder="Tipo Apunte" />
           </mat-form-field>
         </div>
 
