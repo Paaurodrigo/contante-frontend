@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { IPage } from '../model/model.interface';
 import { httpOptions, serverURL } from '../environment/environment';
 import { IAsiento } from '../model/asiento.interface';
+import { IInventariable } from '../model/inventariable.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -146,6 +147,13 @@ export class AsientoService {
     URL += this.serverURL;
     URL += '/' + id;
     return this.oHttp.get<IAsiento>(URL);
+  }
+
+  getInventariable(): Observable<IInventariable> {
+    let URL: string = '';
+    URL += this.serverURL;
+    URL += '/inventariable/all';
+    return this.oHttp.get<IInventariable>(URL);
   }
 
   create(oAsiento: IAsiento): Observable<IAsiento> {

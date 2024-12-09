@@ -8,6 +8,7 @@ import { BotoneraService } from '../../../service/botonera.service';
 import { debounceTime, Subject } from 'rxjs';
 import { Router, RouterModule } from '@angular/router';
 import { TrimPipe } from '../../../pipe/trim.pipe';
+import { IInventariable } from '../../../model/inventariable.interface';
 
 @Component({
   selector: 'app-asiento.admin.routed',
@@ -23,6 +24,7 @@ export class AsientoAdminPlistRoutedComponent implements OnInit {
   nPage: number = 0; // 0-based server count
   nRpp: number = 10;
   //
+  cantidad:number=0;
   strField: string = '';
   strDir: string = '';
   //
@@ -31,6 +33,7 @@ export class AsientoAdminPlistRoutedComponent implements OnInit {
   arrBotonera: string[] = [];
   //
   private debounceSubject = new Subject<string>();
+  
 
   constructor(
     private oAsientoService: AsientoService,
@@ -39,11 +42,19 @@ export class AsientoAdminPlistRoutedComponent implements OnInit {
   ) {
     this.debounceSubject.pipe(debounceTime(10)).subscribe((value) => {
       this.getPage();
+      
     });
+    
   }
 
   ngOnInit() {
     this.getPage();
+    this.oAsientoService.getInventariable().subscribe({
+      next: (oInventariable: IInventariable) => {
+        this.cantidad = oInventariable.inventariable;
+        console.log(oInventariable.inventariable);
+      }
+    });
   }
 
    getPage() {
@@ -56,11 +67,15 @@ export class AsientoAdminPlistRoutedComponent implements OnInit {
             this.nPage,
             oPageFromServer.totalPages
           );
+        
+          
         },
         error: (err) => {
            console.log(err);
          },
        });
+       
+        
    }
 
   edit(oAsiento: IAsiento) {
@@ -113,4 +128,6 @@ export class AsientoAdminPlistRoutedComponent implements OnInit {
   filter(event: KeyboardEvent) {
     this.debounceSubject.next(this.strFiltro);
   }
+
+ 
 }

@@ -37,6 +37,7 @@ export class ApunteXAsientoAdminPlistRoutedComponent implements OnInit {
 
   oAsiento: IAsiento = {} as IAsiento;
   oTotal: ISumas = {} as ISumas;
+  
 
   constructor(
     private oApunteService: ApunteService,
