@@ -83,6 +83,10 @@ export class CuentaAdminPlistRoutedComponent implements OnInit {
     this.oRouter.navigate(['admin/cuenta/delete/', oCuenta.id]);
   }
 
+  createGrupo(oCuenta: ICuenta) {
+    this.oRouter.navigate(['admin/subcuenta/create/bycuenta/', oCuenta.id]);
+  }
+
   goToPage(p: number) {
     if (p) {
       this.nPage = p - 1;
